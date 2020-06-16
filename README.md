@@ -19,11 +19,11 @@ to generate a new application key.
 
 4. start queue workers:
 
-    <ins>If application runs in a Windows system:</ins>
+    <ins>If application runs under Windows system:</ins>
     
     Run `START /b php artisan queue:work --timeout=0` to start processing queue in background.
     
-    <ins>If application runs in a Unix system:</ins>
+    <ins>If application runs under Unix system:</ins>
     
     Run ``nohup php artisan queue:work --timeout=0 &`` to start processing queue in background.
 
