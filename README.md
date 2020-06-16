@@ -37,7 +37,10 @@ You can simply generate a random products file with whe generation button of the
 Before uploading a CSV make sure queue is running. If not Job will be generated but bot imported.
 ([Laravel queues](https://laravel.com/docs/7.x/queues)).
 
-
+## TODOS ⚠
+- Testing imports
+- List of products
+- Queue random product generation to file.
 
 ## Vulnerabilities & contributions
 
