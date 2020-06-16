@@ -13,11 +13,14 @@ Queues can be configured in environment file. Possible queue drivers are DB and 
 1. Create `.env` file: copy or rename `.env.example` located in project root folder. Run `php artisan key:generate` 
 to generate a new application key.
 
-2. Setup database: First of all, create your database and set corresponding connection parameters in the `.env` file.
+2. Install dependencies: to install all app dependencies, run `composer install`.
+If you will modify styles or JS, you'll need also npm modules installed. Run `npm i` to install al packages dependencies.
 
-3. migrate & seed: to generate migrations run command `php artisan migrate`. Then run seeds with `php artisan db:seed`
+3. Setup database: First of all, create your database and set corresponding connection parameters in the `.env` file.
 
-4. start queue workers:
+4. migrate & seed: to generate migrations run command `php artisan migrate`. Then run seeds with `php artisan db:seed`.
+
+5. start queue workers:
 
     <ins>If application runs under Windows system:</ins>
     
