@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'PublicController@index')->name('index');
+
+Route::group(['as' => 'product.', 'namespace' => 'Product'], function () {
+
+    Route::get('random-products', 'productController@generateRandomProducts')->name('generateRandomProducts');
+    Route::post('store', 'productController@store')->name('store');
 });
+

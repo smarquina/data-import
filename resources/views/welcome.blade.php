@@ -22,10 +22,11 @@
                                 v-bind:label="'{{trans('general.attributes.file')}}'">
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile" accept="text/csv">
-                                <label class="custom-file-label" for="inputGroupFile">
-                                    {{__('general.attributes.choose_file')}}
-                                </label>
+                                <input type="file" name="file" class="{{--custom-file-input--}} form-control"
+                                       id="inputGroupFile" accept="text/csv">
+                                {{-- <label class="custom-file-label" for="inputGroupFile">--}}
+                                {{-- {{__('general.attributes.choose_file')}}--}}
+                                {{-- </label>--}}
                             </div>
                         </div>
                     </form-group>
@@ -53,7 +54,8 @@
                 </div>
 
                 <div class="col-12 text-center">
-                    <button type="submit" class="btn btn-primary">@lang('general.buttons.save')</button>
+                    <button type="submit" class="btn btn-primary disabled"
+                            disabled>@lang('general.buttons.save')</button>
                 </div>
             </div>
 
@@ -66,11 +68,17 @@
 @section('js')
     <script type="text/javascript">
         (function (window, document) {
-            document.querySelector("a[data-click=generate]").addEventListener('click', (event) => {
+            document.querySelector("a[data-click=generate]").addEventListener('click', event => {
                 event.preventDefault();
                 return confirm(`{{__('product.alert.generation_takes_long')}}`)
                     ? window.location = event.target.getAttribute('href')
                     : false;
+            }, false);
+
+            document.querySelector("input[name=file]").addEventListener('change', () => {
+                const btn = document.querySelector("button[type=submit");
+                btn.disabled = false;
+                btn.classList.remove('disabled');
             }, false);
         })(window, document);
     </script>
