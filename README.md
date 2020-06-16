@@ -16,7 +16,7 @@ to generate a new application key.
 2. Install dependencies: to install all app dependencies, run `composer install`.
 If you will modify styles or JS, you'll need also npm modules installed. Run `npm i` to install al packages dependencies.
 
-3. Setup database: First of all, create your database and set corresponding connection parameters in the `.env` file.
+3. Setup database: create the database on your system and set corresponding connection parameters in the `.env` file.
 
 4. migrate & seed: to generate migrations run command `php artisan migrate`. Then run seeds with `php artisan db:seed`.
 
@@ -32,6 +32,9 @@ If you will modify styles or JS, you'll need also npm modules installed. Run `np
 
 ## Running project 🚀
 
+To serve the app on to a virtual dev server, run `php artisan serve` and app will start. 
+You can find the url address in the response if this command.
+
 You can simply generate a random products file with whe generation button of the index card header.
 
 Before uploading a CSV make sure queue is running. If not Job will be generated but bot imported.
@@ -41,6 +44,7 @@ Before uploading a CSV make sure queue is running. If not Job will be generated 
 - Testing imports
 - List of products
 - Queue random product generation to file.
+- Dockerize this
 
 ## Vulnerabilities & contributions
 
