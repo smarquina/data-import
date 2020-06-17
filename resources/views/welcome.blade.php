@@ -54,8 +54,9 @@
                 </div>
 
                 <div class="col-12 text-center">
-                    <button type="submit" class="btn btn-primary disabled"
-                            disabled>@lang('general.buttons.save')</button>
+                    <button type="submit" class="btn btn-primary disabled" disabled>
+                        @lang('general.buttons.save')
+                    </button>
                 </div>
             </div>
 

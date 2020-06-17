@@ -15,9 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'PublicController@index')->name('index');
 
-Route::group(['as' => 'product.', 'namespace' => 'Product'], function () {
+Route::group(['as' => 'product.', 'prefix' => 'product', 'namespace' => 'Product'], function () {
 
     Route::get('random-products', 'productController@generateRandomProducts')->name('generateRandomProducts');
     Route::post('store', 'productController@store')->name('store');
+    Route::get('index', 'productController@index')->name('index');
+    Route::get('list', 'productController@list')->name('list');
 });
 

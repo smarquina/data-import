@@ -22,6 +22,7 @@ use Faker\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\DataTables;
 
 class ProductController extends Controller {
 
@@ -77,6 +78,39 @@ class ProductController extends Controller {
         //nohup php artisan queue:work --timeout=0 &
         return redirect()->route('index')
                          ->with(FlashStatus::SUCCESS, trans('general.file.upload_ok'));
+    }
+
+
+    /**
+     * Display products.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index() {
+        return view('product.list');
+    }
+
+    /**
+     * List resources.
+     *
+     * @param DataTables $dataTables
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function list(DataTables $dataTables) {
+        $query = Product::query()
+                        ->select(['id', 'name', 'description', 'price', 'stock', 'last_sale_at', 'sku'])
+                        ->orderByDesc('id');
+
+        return $dataTables->eloquent($query)
+                          ->editColumn('name', static function ($item) { return ucfirst($item->name); })
+                          ->editColumn('price', static function ($item) { return "{$item->price} €"; })
+                          ->editColumn('last_sale_at', static function ($item) { return $item->last_sale_at->toDateTimeString('minute'); })
+                          ->addColumn('actions', function ($item) {
+                              return [
+
+                              ];
+                          })
+                          ->setRowId('id')->toJson();
     }
 
 }
