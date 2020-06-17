@@ -10,6 +10,8 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Models\Product\Product;
+
 class PublicController extends Controller {
 
     public function index() {

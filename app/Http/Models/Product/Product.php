@@ -9,22 +9,23 @@ namespace App\Http\Models\Product;
 
 
 use App\Http\Models\BaseModel;
+use App\Http\Models\Translate\Translation;
 
 
 /**
  * App\Http\Models\Product\Product
  *
- * @property int                                    $id
- * @property string                                 $sku
- * @property int|null                               $category_id
- * @property string                                 $name
- * @property string|null                            $description
- * @property float|null                             $price
- * @property int|null                               $stock
- * @property \Illuminate\Support\Carbon|null        $last_sale_at
- * @property \Illuminate\Support\Carbon|null        $created_at
- * @property \Illuminate\Support\Carbon|null        $updated_at
- * @property-read \App\Http\Models\Product\Category $category
+ * @property int                                              $id
+ * @property string                                           $sku
+ * @property int|null                                         $category_id
+ * @property string                                           $name
+ * @property string|null                                      $description
+ * @property float|null                                       $price
+ * @property int|null                                         $stock
+ * @property \Illuminate\Support\Carbon|null                  $last_sale_at
+ * @property \Illuminate\Support\Carbon|null                  $created_at
+ * @property \Illuminate\Support\Carbon|null                  $updated_at
+ * @property-read \App\Http\Models\Product\Category           $category
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product query()
@@ -39,6 +40,7 @@ use App\Http\Models\BaseModel;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \App\Http\Models\Translate\Translation|null $translate
  */
 class Product extends BaseModel {
 
@@ -94,5 +96,47 @@ class Product extends BaseModel {
      */
     public function category() {
         return $this->belongsTo(Category::class, 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function translate() {
+        return $this->morphOne(Translation::class, 'table')
+                    ->where('locale', app()->getLocale());
+    }
+
+    /**
+     * Translate given attribute.
+     *
+     * @param string $column
+     * @return mixed
+     */
+    public function trans(string $column) {
+        $translation = Translation::where(function ($query) {
+            $query->whereTable($this);
+        })
+                                  ->whereLocale(app()->getLocale())
+                                  ->whereColumnName($column)
+                                  ->first();
+        return optional($translation)->value ?? $this->attributes[$column];
+    }
+
+    /**
+     * Name getter.
+     *
+     * @return string
+     */
+    public function getNameAttribute(): string {
+        return $this->trans('name');
+    }
+
+    /**
+     * Description getter.
+     *
+     * @return string
+     */
+    public function getDescriptionAttribute(): string {
+        return $this->trans('description');
     }
 }

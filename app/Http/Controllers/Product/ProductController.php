@@ -98,8 +98,7 @@ class ProductController extends Controller {
      */
     public function list(DataTables $dataTables) {
         $query = Product::query()
-                        ->select(['id', 'name', 'description', 'price', 'stock', 'last_sale_at', 'sku'])
-                        ->orderByDesc('id');
+                        ->select(['id', 'name', 'description', 'price', 'stock', 'last_sale_at', 'sku']);
 
         return $dataTables->eloquent($query)
                           ->editColumn('name', static function ($item) { return ucfirst($item->name); })
