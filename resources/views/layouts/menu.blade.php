@@ -20,6 +20,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('product.index')}}">{{__('general.menu.products')}}</a>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a id="langDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        {{ __('general.menu.lang') }} <span class="caret"></span>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="langDropdown">
+                        @foreach(\App\Http\Models\Translate\Translation::availableLangs() as $code => $lang)
+                            <a class="dropdown-item" href="#" data-lang="{{$code}}">{{ $lang }}</a>
+                        @endforeach
+                        <form id="set-lang-form" action="{{ route('setLang') }}" method="POST" style="display: none;">
+                            <input type="hidden" name="language" value="">
+                            @csrf
+                        </form>
+                    </div>
+                </li>
+
+
                 <!-- Authentication Links -->
                 @guest
                     {{--                    <li class="nav-item">--}}
@@ -55,3 +74,20 @@
         </div>
     </div>
 </nav>
+
+
+<script type="text/javascript">
+    (function (window, document) {
+        window.onload = () => {
+            document.querySelectorAll("a[data-lang]").forEach(anchor => {
+                anchor.addEventListener('click', event => {
+                    event.preventDefault();
+                    const lang = event.target.getAttribute('data-lang');
+                    const form = document.querySelector("#set-lang-form");
+                    form.querySelector("input[name=language]").value = lang;
+                    form.submit();
+                }, false)
+            });
+        }
+    })(window, document);
+</script>

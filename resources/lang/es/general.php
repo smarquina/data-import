@@ -37,10 +37,14 @@ return ['bool'       => ['yes' => 'Si',
             'date_from'   => 'Fecha inicio',
             'date_to'     => 'Fecha finalización',
             'date'        => 'Fecha',
-            'location'    => 'Población',
             'actions'     => 'Acciones',
         ],
         'menu'       => [
             "products" => "Productos",
+            'lang'     => 'Idioma',
+        ],
+        'lang'       => [
+            'success_update' => "El idioma de la aplicación ha sido modificado a :value",
+            'error_update'   => "El idioma no es elegible",
         ],
 ];

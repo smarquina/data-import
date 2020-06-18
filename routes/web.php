@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'PublicController@index')->name('index');
+Route::post('language', 'PublicController@setLang')->name('setLang');
 
 Route::group(['as' => 'product.', 'prefix' => 'product', 'namespace' => 'Product'], function () {
 

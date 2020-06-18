@@ -16,10 +16,7 @@ abstract class Controller extends BaseController {
      * @param array $attributes
      */
     public function __construct(array $attributes = []) {
-        if (request()->has('lang')) {
-            app()->setLocale(request('lang'));
-        }
-
+        \App::setLocale(\Cookie::get('app-language') ?: config('app.locale'));
         Carbon::setLocale(\App::getLocale());
     }
 }

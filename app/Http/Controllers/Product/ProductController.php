@@ -102,6 +102,7 @@ class ProductController extends Controller {
 
         return $dataTables->eloquent($query)
                           ->editColumn('name', static function ($item) { return ucfirst($item->name); })
+                          ->editColumn('description', static function ($item) { return ucfirst($item->description); })
                           ->editColumn('price', static function ($item) { return "{$item->price} €"; })
                           ->editColumn('last_sale_at', static function ($item) { return $item->last_sale_at->toDateTimeString('minute'); })
                           ->addColumn('actions', function ($item) {

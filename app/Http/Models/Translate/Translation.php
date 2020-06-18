@@ -25,6 +25,7 @@ use Illuminate\Database\Query\Builder;
  * @property \Illuminate\Support\Carbon|null                    $created_at
  * @property \Illuminate\Support\Carbon|null                    $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $table
+ * @method static string[] availableLangs()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation query()
@@ -85,5 +86,17 @@ class Translation extends BaseModel {
     public function scopeWhereTable($query, $model): \Illuminate\Database\Eloquent\Builder {
         return $query->where('table_id', $model->getKey())
                      ->where('table_type', $model->getMorphClass());
+    }
+
+    /**
+     * @param Builder $query
+     * @return string[]
+     */
+    public function scopeAvailableLangs($query): array {
+        return [
+            'es' => 'Español',
+            'en' => 'English',
+            'fr' => 'Francais',
+        ];
     }
 }
