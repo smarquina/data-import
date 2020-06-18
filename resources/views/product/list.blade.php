@@ -34,6 +34,18 @@
 @section('js')
     <script type="text/javascript">
         (function (window, document) {
+            let langUrl;
+            switch ("{{app()->getLocale()}}") {
+                case "es":
+                    langUrl = "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json";
+                    break;
+                case "fr":
+                    langUrl = "//cdn.datatables.net/plug-ins/1.10.15/i18n/French.json";
+                    break;
+                default:
+                    langUrl = "//cdn.datatables.net/plug-ins/1.10.15/i18n/English.json";
+            }
+            console.log(langUrl);
             $("table.dataTable").DataTable({
                 ordering: true,
                 info: true,
@@ -60,7 +72,7 @@
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ],
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
+                    url: langUrl,
                 },
                 initComplete: function (settings, json) {
 
