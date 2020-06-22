@@ -26,6 +26,7 @@
 <body>
 <div id="app">
     @include('layouts.menu')
+    @include('layouts.toast')
 
     <main class="py-4">
         @yield('content')
@@ -33,7 +34,7 @@
 </div>
 
 <!-- Scripts -->
-<script  rel="preload" src="{{ asset(mix('js/app.js')) }}"></script>
+<script rel="preload" src="{{ asset(mix('js/app.js')) }}"></script>
 @yield('js')
 </body>
 </html>

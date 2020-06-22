@@ -39,6 +39,7 @@ use Illuminate\Database\Query\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation whereValue($value)
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
  */
 class Translation extends BaseModel {
 
@@ -74,8 +75,22 @@ class Translation extends BaseModel {
         'value'       => 'string',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
     public function table() {
         return $this->morphTo('table');
+    }
+
+    /**
+     * @param Model $table
+     * @return $this
+     */
+    public function fillTable(Model $table) {
+        return $this->fill([
+                               'table_id'   => $table->getKey(),
+                               'table_type' => $table->getMorphClass(),
+                           ]);
     }
 
     /**

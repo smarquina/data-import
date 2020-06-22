@@ -16,11 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'PublicController@index')->name('index');
 Route::post('language', 'PublicController@setLang')->name('setLang');
 
-Route::group(['as' => 'product.', 'prefix' => 'product', 'namespace' => 'Product'], function () {
+Route::group(['namespace' => 'Product'], function () {
+    Route::resource('product', 'ProductController')->except(['create', 'destroy', 'show']);
 
-    Route::get('random-products', 'productController@generateRandomProducts')->name('generateRandomProducts');
-    Route::post('store', 'productController@store')->name('store');
-    Route::get('index', 'productController@index')->name('index');
-    Route::get('list', 'productController@list')->name('list');
+    Route::group(['as' => 'product.', 'prefix' => 'product'], function () {
+        Route::get('random-products', 'ProductController@generateRandomProducts')->name('generateRandomProducts');
+        Route::get('list', 'ProductController@list')->name('list');
+        Route::put('product-translation/{product}', 'ProductController@updateTranslation')->name('updateTranslation')->where('product', '[0-9]+');
+    });
 });
 

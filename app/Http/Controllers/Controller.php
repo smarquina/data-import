@@ -19,4 +19,15 @@ abstract class Controller extends BaseController {
         \App::setLocale(\Cookie::get('app-language') ?: config('app.locale'));
         Carbon::setLocale(\App::getLocale());
     }
+
+    /**
+     * Get edit HTML button.
+     *
+     * @param string $url
+     * @param string $title
+     * @return string
+     */
+    public function getEditButton(string $url, $title = '') {
+        return "<a href=\"{$url}\" class=\"button btn-group-sm\"><i class=\"fas fa-edit\"></i></a>";
+    }
 }

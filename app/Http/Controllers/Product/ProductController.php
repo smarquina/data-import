@@ -15,10 +15,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Enums\FlashStatus;
 use App\Http\Models\Product\Category;
 use App\Http\Models\Product\Product;
+use App\Http\Models\Translate\Translation;
+use App\Http\Requests\Product\ProductRequest;
+use App\Http\Requests\Product\SaveProductTranslationsRequest;
 use App\Http\Requests\Product\UploadImporterRequest;
 use App\Imports\ProductsImport;
 use App\Jobs\ParseCSVProducts;
 use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -106,11 +110,80 @@ class ProductController extends Controller {
                           ->editColumn('price', static function ($item) { return "{$item->price} €"; })
                           ->editColumn('last_sale_at', static function ($item) { return $item->last_sale_at->toDateTimeString('minute'); })
                           ->addColumn('actions', function ($item) {
-                              return [
-
-                              ];
+                              return $this->getEditButton(route('product.edit', $item->id), trans('product.edit'));
                           })
+                          ->rawColumns(['actions'])
                           ->setRowId('id')->toJson();
     }
 
+    /**
+     * Edit Resource.
+     *
+     * @param Product $product
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function edit(Product $product) {
+        return view('product.edit', compact('product'));
+    }
+
+    /**
+     * Update resource data.
+     *
+     * @param Product        $product
+     * @param ProductRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(Product $product, ProductRequest $request): ?\Illuminate\Http\RedirectResponse {
+        try {
+            \DB::beginTransaction();
+
+            $product->update($request->validated());
+            $product->save();
+
+            \DB::commit();
+            return redirect()->route('product.index')
+                ->with(FlashStatus::SUCCESS, trans('general.model.update.correct', ['value' => ucfirst($product->name)]));
+
+        } catch (\Exception $exception) {
+            \Log::error($exception);
+            \DB::rollBack();
+
+            return redirect()->back()->withInput()
+                             ->with(FlashStatus::ERROR, trans('general.model.update.error'));
+        }
+    }
+
+    /**
+     * Save & update product translations.
+     *
+     * @param Product                        $product
+     * @param SaveProductTranslationsRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Throwable
+     */
+    public function updateTranslation(Product $product, SaveProductTranslationsRequest $request) {
+        try {
+            \DB::beginTransaction();
+            $translations = $product->translations->where('locale', $request->input('locale'));
+
+            collect($request->input('data'))->each(function ($transData) use ($translations, &$product) {
+                $translation = $translations->firstWhere('column_name', $transData['column']);
+
+                if ($translation instanceof Translation) {
+                    $translation->value = $transData['value'];
+                } else {
+                    $product->translate(request()->input('locale'), $transData['column'], $transData['value']);
+                    $product->save();
+                }
+            });
+
+            \DB::commit();
+            return response(trans('general.model.update.correct', ['value' => "{$product->name} - ({$request->input('locale')})"]));
+        } catch (\Exception $exception) {
+            \Log::error($exception);
+            \DB::rollBack();
+
+            return response(trans('general.model.update.error', $exception->getCode()));
+        }
+    }
 }

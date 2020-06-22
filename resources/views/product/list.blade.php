@@ -45,7 +45,7 @@
                 default:
                     langUrl = "//cdn.datatables.net/plug-ins/1.10.15/i18n/English.json";
             }
-            console.log(langUrl);
+
             $("table.dataTable").DataTable({
                 ordering: true,
                 info: true,

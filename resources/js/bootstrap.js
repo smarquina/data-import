@@ -11,6 +11,17 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+
+    $.fn.showToast = function(text) {
+        const toast = this;
+        if (!toast) {
+            attachToast();
+        }
+        toast.find("div.toast-body").text(text);
+        toast.toast('show');
+    }
+
+
 } catch (e) {
 }
 

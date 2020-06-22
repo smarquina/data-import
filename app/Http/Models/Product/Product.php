@@ -8,24 +8,29 @@
 namespace App\Http\Models\Product;
 
 
+use App\Contracts\TranslatableContract;
 use App\Http\Models\BaseModel;
 use App\Http\Models\Translate\Translation;
+use App\Traits\Translatable;
 
 
 /**
  * App\Http\Models\Product\Product
  *
- * @property int                                              $id
- * @property string                                           $sku
- * @property int|null                                         $category_id
- * @property string                                           $name
- * @property string|null                                      $description
- * @property float|null                                       $price
- * @property int|null                                         $stock
- * @property \Illuminate\Support\Carbon|null                  $last_sale_at
- * @property \Illuminate\Support\Carbon|null                  $created_at
- * @property \Illuminate\Support\Carbon|null                  $updated_at
- * @property-read \App\Http\Models\Product\Category           $category
+ * @property int                                                                                    $id
+ * @property string                                                                                 $sku
+ * @property int|null                                                                               $category_id
+ * @property string                                                                                 $name
+ * @property string|null                                                                            $description
+ * @property float|null                                                                             $price
+ * @property int|null                                                                               $stock
+ * @property \Illuminate\Support\Carbon|null                                                        $last_sale_at
+ * @property \Illuminate\Support\Carbon|null                                                        $created_at
+ * @property \Illuminate\Support\Carbon|null                                                        $updated_at
+ * @property-read \App\Http\Models\Product\Category                                                 $category
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Http\Models\Translate\Translation[] $translations
+ * @property-read int|null                                                                          $translations_count
+ * @method static string[] translatableColumns()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product query()
@@ -39,10 +44,12 @@ use App\Http\Models\Translate\Translation;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereSku($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
  * @mixin \Eloquent
- * @property-read \App\Http\Models\Translate\Translation|null $translate
  */
-class Product extends BaseModel {
+class Product extends BaseModel implements TranslatableContract {
+
+    use Translatable;
 
     /**
      * The database table used by the model.
@@ -99,27 +106,10 @@ class Product extends BaseModel {
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function translate() {
-        return $this->morphOne(Translation::class, 'table')
-                    ->where('locale', app()->getLocale());
-    }
-
-    /**
-     * Translate given attribute.
-     *
-     * @param string $column
-     * @return mixed
-     */
-    public function trans(string $column) {
-        $translation = Translation::where(function ($query) {
-            $query->whereTable($this);
-        })
-                                  ->whereLocale(app()->getLocale())
-                                  ->whereColumnName($column)
-                                  ->first();
-        return optional($translation)->value ?? $this->attributes[$column];
+    public function translations() {
+        return $this->morphMany(Translation::class, 'table');
     }
 
     /**
@@ -138,5 +128,39 @@ class Product extends BaseModel {
      */
     public function getDescriptionAttribute(): string {
         return $this->trans('description');
+    }
+
+    /**
+     * Translatable column names.
+     *
+     * @return string[]
+     */
+    public function scopeTranslatableColumns(): array {
+        return [
+            'name'        => trans('general.attributes.name'),
+            'description' => trans('general.attributes.description'),
+        ];
+    }
+
+    /**
+     * Save new translation.
+     *
+     * @param string         $locale
+     * @param string         $column
+     * @param string|integer $value
+     * @return Translation
+     */
+    public function translate(string $locale, string $column, $value): Translation {
+        $translation = (new Translation)->fillTable($this)
+                                        ->fill([
+                                                   'foreign_key' => $this->id,
+                                                   'locale'      => $locale,
+                                                   'column_name' => $column,
+                                                   'value'       => $value,
+                                               ]);
+
+        $this->translations()->save($translation);
+
+        return $translation;
     }
 }
