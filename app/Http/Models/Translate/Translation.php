@@ -38,8 +38,9 @@ use Illuminate\Database\Query\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation whereTableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Translate\Translation whereValue($value)
- * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboJson()
+ * @mixin \Eloquent
  */
 class Translation extends BaseModel {
 

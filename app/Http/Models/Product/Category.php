@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Category whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboJson()
  * @mixin \Eloquent
  */
 class Category extends BaseModel {

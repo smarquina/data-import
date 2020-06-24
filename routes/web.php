@@ -23,6 +23,15 @@ Route::group(['namespace' => 'Product'], function () {
         Route::get('random-products', 'ProductController@generateRandomProducts')->name('generateRandomProducts');
         Route::get('list', 'ProductController@list')->name('list');
         Route::put('product-translation/{product}', 'ProductController@updateTranslation')->name('updateTranslation')->where('product', '[0-9]+');
+        Route::get('product-translation/{product}', 'ProductController@listTranslations')->name('listTranslations')->where('product', '[0-9]+');
+        Route::get('translatable-columns', 'ProductController@listTranslatableColumns')->name('listTranslatableColumns');
+    });
+});
+
+Route::group(['namespace' => 'Translation'], function () {
+
+    Route::group(['as' => 'translation.', 'prefix' => 'translation'], function () {
+        Route::get('locales', 'TranslationController@listLocales')->name('listLocales');
     });
 });
 

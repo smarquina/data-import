@@ -19,6 +19,7 @@ use Illuminate\Database\Query\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboJson()
  * @mixin \Eloquent
  */
 class BaseModel extends \Eloquent {
@@ -55,6 +56,22 @@ class BaseModel extends \Eloquent {
      */
     public function scopeComboList($query) {
         return $query->get()->pluck($this->getNameFieldComboBoxAttribute(), 'id');
+    }
+
+    /**
+     * Json combo.
+     *
+     * @param Builder $query
+     * @return mixed
+     */
+    public function scopeComboJson($query) {
+        return $query->get()->transform(function ($item) {
+            $field = $this->getNameFieldComboBoxAttribute();
+            return [
+                'id'   => $item->id,
+                'text' => $item->$field,
+            ];
+        });
     }
 
     /**

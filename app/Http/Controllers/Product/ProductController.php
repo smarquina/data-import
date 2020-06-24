@@ -69,7 +69,7 @@ class ProductController extends Controller {
      * @param UploadImporterRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(UploadImporterRequest $request) {
+    public function store(UploadImporterRequest $request): \Illuminate\Http\RedirectResponse {
         if ($request->input('import_alg', 'custom') === 'custom') {
             $file = \Storage::disk('temp')
                             ->putFileAs("uploaded", $request->file('file'), uniqid("products_", false) . ".csv");
@@ -90,7 +90,7 @@ class ProductController extends Controller {
      *
      * @return \Illuminate\View\View
      */
-    public function index() {
+    public function index(): \Illuminate\View\View {
         return view('product.list');
     }
 
@@ -100,7 +100,7 @@ class ProductController extends Controller {
      * @param DataTables $dataTables
      * @return \Illuminate\Http\JsonResponse
      */
-    public function list(DataTables $dataTables) {
+    public function list(DataTables $dataTables): \Illuminate\Http\JsonResponse {
         $query = Product::query()
                         ->select(['id', 'name', 'description', 'price', 'stock', 'last_sale_at', 'sku']);
 
@@ -142,7 +142,7 @@ class ProductController extends Controller {
 
             \DB::commit();
             return redirect()->route('product.index')
-                ->with(FlashStatus::SUCCESS, trans('general.model.update.correct', ['value' => ucfirst($product->name)]));
+                             ->with(FlashStatus::SUCCESS, trans('general.model.update.correct', ['value' => ucfirst($product->name)]));
 
         } catch (\Exception $exception) {
             \Log::error($exception);
@@ -154,11 +154,40 @@ class ProductController extends Controller {
     }
 
     /**
+     * List currently saved translations.
+     *
+     * @param Product $product
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listTranslations(Product $product): \Illuminate\Http\JsonResponse {
+        $translations = $product->translations->map(function (Translation $translation) {
+            $translation->locale_name = Translation::availableLangs()[$translation->locale];
+            return $translation;
+        })->groupBy('locale_name');
+
+        return response()->json($translations);
+    }
+
+    /**
+     * List columns that can be translated
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listTranslatableColumns(): \Illuminate\Http\JsonResponse {
+        $columns = Collection::wrap(Product::translatableColumns())->transform(function ($column, $name) {
+            return [
+                'id'   => $name,
+                'text' => $column,
+            ];
+        });
+        return response()->json($columns);
+    }
+
+    /**
      * Save & update product translations.
      *
      * @param Product                        $product
      * @param SaveProductTranslationsRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      * @throws \Throwable
      */
     public function updateTranslation(Product $product, SaveProductTranslationsRequest $request) {
@@ -171,9 +200,9 @@ class ProductController extends Controller {
 
                 if ($translation instanceof Translation) {
                     $translation->value = $transData['value'];
+                    $translation->save();
                 } else {
                     $product->translate(request()->input('locale'), $transData['column'], $transData['value']);
-                    $product->save();
                 }
             });
 

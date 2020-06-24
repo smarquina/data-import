@@ -45,6 +45,7 @@ use App\Traits\Translatable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\Product\Product whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboList()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Http\Models\BaseModel comboJson()
  * @mixin \Eloquent
  */
 class Product extends BaseModel implements TranslatableContract {
